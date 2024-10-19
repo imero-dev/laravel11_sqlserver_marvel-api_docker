@@ -34,5 +34,9 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-
+    
+    'marvel' => [
+        'public' => env('MARVEL_APIKEY_PUB'),
+        'private' => env('MARVEL_APIKEY_PRIV'),
+    ],
 ];

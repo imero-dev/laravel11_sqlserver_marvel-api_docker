@@ -25,15 +25,21 @@
             <button type="submit" class="bg-blue-500 text-white rounded-r px-4 py-2">Aplicar</button>
         </form>
 
+        @if(isset($error))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {{ $error }}
+            </div>
+        @endif
+
         <div id="charactersContainer" class="grid grid-cols-1 gap-6">
-            @foreach($characters as $character)
-                <div class="character-item flex items-center bg-white rounded shadow p-4">
-                    <img src="{{ $character['image'] }}" alt="{{ $character['name'] }}" class="character-image w-16 h-16 object-cover rounded-full cursor-pointer" onclick="showImage(this)">
-                    <div class="character-name ml-4">
-                        <h2 class="text-xl font-semibold">{{ $character['name'] }}</h2>
-                    </div>
+        @foreach($characters as $character)
+            <div class="character-item flex items-center bg-white rounded shadow p-4">
+                <img src="{{ $character['thumbnail']['path'] . '/standard_xlarge.' . $character['thumbnail']['extension'] }}" alt="{{ $character['name'] }}" class="character-image w-16 h-16 object-cover rounded-full cursor-pointer" onclick="showImage(this)">
+                <div class="character-name ml-4">
+                    <h2 class="text-xl font-semibold">{{ $character['name'] }}</h2>
                 </div>
-            @endforeach
+            </div>
+        @endforeach
         </div>
     </div>
 
@@ -48,32 +54,39 @@
             const modalImage = document.getElementById('modalImage');
             const rect = imgElement.getBoundingClientRect();
 
-            modalImage.src = imgElement.src;
-            modalImage.style.position = 'fixed';
-            modalImage.style.top = rect.top + 'px';
-            modalImage.style.left = rect.left + 'px';
-            modalImage.style.width = rect.width + 'px';
-            modalImage.style.height = rect.height + 'px';
-            modalImage.style.transition = 'all 0.3s ease-in-out';
-            modalImage.style.zIndex = '1000';
+            const highResImageUrl = imgElement.src.replace('/standard_xlarge', '');
 
-            modal.classList.remove('hidden');
-
-            modalImage.getBoundingClientRect();
-
-            modalImage.style.top = '50%';
-            modalImage.style.left = '50%';
-            modalImage.style.transform = 'translate(-50%, -50%)';
-            modalImage.style.width = '80vw';
-            modalImage.style.height = 'auto';
-
-            const closeButton = document.getElementById('closeButton');
-            closeButton.classList.add('hidden');
-
-            setTimeout(() => {
-                closeButton.classList.remove('hidden');
-            }, 300);
-        }
+            //preload image
+            const preloadImage = new Image();
+            preloadImage.src = highResImageUrl;
+            preloadImage.onload = function() {
+                modalImage.src = highResImageUrl;
+                modalImage.style.position = 'fixed';
+                modalImage.style.top = rect.top + 'px';
+                modalImage.style.left = rect.left + 'px';
+                modalImage.style.width = rect.width + 'px';
+                modalImage.style.height = rect.height + 'px';
+                modalImage.style.transition = 'all 0.3s ease-in-out';
+                modalImage.style.zIndex = '1000';
+                
+                modal.classList.remove('hidden');
+                
+                modalImage.getBoundingClientRect();
+                
+                modalImage.style.top = '50%';
+                modalImage.style.left = '50%';
+                modalImage.style.transform = 'translate(-50%, -50%)';
+                modalImage.style.width = '80vw';
+                modalImage.style.height = 'auto';
+                
+                const closeButton = document.getElementById('closeButton');
+                closeButton.classList.add('hidden');
+                
+                setTimeout(() => {
+                    closeButton.classList.remove('hidden');
+                }, 300);
+            };
+           }
 
         function closeModal() {
             const modal = document.getElementById('imageModal');
