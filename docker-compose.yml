@@ -1,0 +1,63 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: marvel-app
+    container_name: marvel-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - marvel-network
+    env_file:
+      - .env
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+
+  webserver:
+    image: nginx:alpine
+    container_name: marvel-webserver
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www/html
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - marvel-network
+    depends_on:
+      - app
+
+  sqlserver:
+    build:
+      context: ./sqlserver-init
+      dockerfile: Dockerfile
+    image: marvel-sqlserver
+    container_name: marvel-sqlserver
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "${SA_PASSWORD}"
+      MSSQL_PID: "Express"
+    ports:
+      - "1433:1433"
+    networks:
+      - marvel-network
+    volumes:
+      - sqlserverdata:/var/opt/mssql
+    healthcheck:
+      test: [ "CMD", "/opt/mssql-tools18/bin/sqlcmd", "-C", "-S", "localhost", "-U", "sa", "-P", "${SA_PASSWORD}", "-Q", "SELECT 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+networks:
+  marvel-network:
+    driver: bridge
+
+volumes:
+  sqlserverdata:
