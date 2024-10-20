@@ -39,10 +39,8 @@ class MarvelApiService
         $response = Http::get('https://gateway.marvel.com/v1/public/characters', $params);
 
         if ($response->successful()) {
-            //guardar en la db
             return $response->json();
         } else {
-            // recuperar de la db
             throw new \Exception('Error al conectar con la API de Marvel.');//. response()->json());
         }
 
