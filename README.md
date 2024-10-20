@@ -3,8 +3,9 @@
 
 Es necesario configurar la memoria minima en la configuracion de docker desktop a al menos 2,3GB para sqlserver.
 
-Para iniciar los contenedores escribir ''make run'' (puede tardar 5min en iniciar los contenedores)
+Para iniciar los contenedores ejecuta `make run` o `docker compose up --build -d` (puede tardar entre 5 y 10 min en iniciar los contenedores)
 
+Despues la web es accesible en http://localhost:8000 (es preciso esperar a que se generen todos los ficheros)
 
 
 ## **Recursos**

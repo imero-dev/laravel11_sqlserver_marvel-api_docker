@@ -2,7 +2,6 @@
 
 run: 
 	docker compose up --build -d
-	docker stats
 
 stop:
 	docker compose down
@@ -26,6 +25,9 @@ re: stop clean run
 
 status:
 	docker compose ps
+
+stats:
+	docker stats
 
 logs:
 	docker compose logs -f

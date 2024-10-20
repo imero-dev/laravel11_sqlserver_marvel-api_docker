@@ -9,6 +9,9 @@ do
 done
 echo "SQL Server está disponible."
 
+echo "instalando dependencias..."
+composer install
+
 # Ejecutar migraciones
 echo "Ejecutando migraciones..."
 php artisan migrate --force
